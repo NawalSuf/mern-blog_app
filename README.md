@@ -27,7 +27,8 @@ We used **MongoDB Atlas**, a cloud-hosted NoSQL database, as the primary data st
 4. Retrieved the **connection URI**, and added it to the backend `.env` file:
 
 MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/<db-name>?retryWrites=true&w=majority
-Backend successfully connected and interacted with MongoDB Atlas for:
+
+## Backend successfully connected and interacted with MongoDB Atlas for:
 
 User authentication
 
@@ -51,69 +52,75 @@ Backend is deployed to an Ubuntu EC2 instance using **Ansible Playbook** with PM
 ### Run the backend playbook:
 
 ansible-playbook -i inventory backend-playbook.yml
-PM2 Process Status:
-bash
-
+🟢 PM2 Process Running:
+We used PM2 to keep the Node.js server running in the background.
 
 pm2 list
 
 🖼️ Media Uploads to S3
-A separate bucket (media-bucket-alsufyani) is used
+A dedicated S3 bucket is used for storing media uploads such as images.
 
-IAM access keys are used for programmatic uploads from the backend
+✔️ Setup:
+Created S3 bucket: media-bucket-alsufyani
+
+Configured IAM user for programmatic access
+
+Applied CORS policy
+
+Connected bucket to backend via environment variables
+
+AWS_REGION=eu-north-1
+S3_BUCKET=media-bucket-alsufyani
+MEDIA_BASE_URL=https://media-bucket-alsufyani.s3.eu-north-1.amazonaws.com
+
+✅ Here's a successful image upload to the bucket:
 
 
 🌐 Frontend Deployment to S3
 The frontend was built using Vite + React and deployed to S3 static website hosting.
 
 .env config:
-env
-
 
 VITE_BASE_URL=http://<EC2-PUBLIC-DNS>:5000/api
 VITE_MEDIA_BASE_URL=https://media-bucket-alsufyani.s3.eu-north-1.amazonaws.com
 Build & Deploy:
-bash
-
 
 pnpm run build
 aws s3 sync dist/ s3://frontend-bucket-alsufyani/ --delete
 
-🔐 Security Configuration
-IAM user created with restricted access to the media S3 bucket
+🔐 Security Measures
+IAM policy for limited S3 access
 
-Security group allows ports: 22, 80, 5000
+Security group allows only ports: 22 (SSH), 80 (HTTP), 5000 (App)
 
-Sensitive data managed via environment variables
+Sensitive data handled via .env and excluded from version control
 
 .gitignore includes:
-
-bash
-
 
 .env
 .pem
 .terraform/
 *.key
-🛠️ Technologies Used
-Tool	Purpose
-AWS EC2	Backend hosting
-MongoDB Atlas	Managed NoSQL DB
-AWS S3	Media + Frontend storage
-Terraform	Infrastructure provisioning
-Ansible	Configuration management
-PM2	Process manager for Node.js
-Node.js	Backend server
-React.js	Frontend application
+
+## 🛠️ Technologies Used
+
+| 🧰 Tool           | 📝 Purpose                         |
+|-------------------|------------------------------------ |
+| **AWS EC2**       | Hosting the backend server          |
+| **MongoDB Atlas** | Managed NoSQL cloud database        |
+| **AWS S3**        | Static frontend + media storage     |
+| **Terraform**     | Infrastructure as Code (IaC)        |
+| **Ansible**       | Backend provisioning & configuration|
+| **PM2**           | Node.js process manager             |
+| **Node.js**       | Backend API (Express.js)            |
+| **React.js**      | Frontend UI framework               |
 
 🧼 Cleanup Steps
 To destroy the created infrastructure:
 
-bash
-
-
 terraform destroy
-Also:
+
+Other cleanup steps:
 
 Remove .env and credential files from EC2
 
