@@ -81,8 +81,6 @@ MEDIA_BASE_URL=https://media-bucket-alsufyani.s3.eu-north-1.amazonaws.com
 🌐 Frontend Deployment to S3
 The frontend was built using Vite + React and deployed to S3 static website hosting.
 
-.env config:
-
 VITE_BASE_URL=http://<EC2-PUBLIC-DNS>:5000/api
 VITE_MEDIA_BASE_URL=https://media-bucket-alsufyani.s3.eu-north-1.amazonaws.com
 Build & Deploy:
@@ -90,7 +88,11 @@ Build & Deploy:
 pnpm run build
 aws s3 sync dist/ s3://frontend-bucket-alsufyani/ --delete
 
-🔐 Security Measures
+![S3 frontend in browser](screenshot/PM2showingbackendrunning.png)
+
+
+## 🔐 Security Measures
+
 IAM policy for limited S3 access
 
 Security group allows only ports: 22 (SSH), 80 (HTTP), 5000 (App)
