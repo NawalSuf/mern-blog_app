@@ -75,7 +75,7 @@ MEDIA_BASE_URL=https://media-bucket-alsufyani.s3.eu-north-1.amazonaws.com
 
 ✅ Here's a successful image upload to the bucket:
 
-![Media upload successfully](screenshot/screenshot/Media-upload-success.png)
+![Media upload successfully](screenshot/Media-upload-success.png)
 
 
 🌐 Frontend Deployment to S3
