@@ -1,0 +1,20 @@
+# Sensitive files
+*.pem
+*.env
+env.j2
+*.log
+__pycache__/
+node_modules/
+*.pyc
+.DS_Store
+.terraform/
+
+
+# Ansible secrets
+ansible/roles/backend/vars/*
+!ansible/roles/backend/vars/*.example
+
+# Node modules
+node_modules/
+logs/
+dist/

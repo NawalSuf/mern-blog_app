@@ -1,0 +1,83 @@
+---
+- name: Install required packages
+  become: yes
+  apt:
+    name:
+      - git
+      - curl
+    update_cache: yes
+
+- name: Ensure blog-app directory is clean
+  file:
+    path: /home/ubuntu/blog-app
+    state: absent
+  become: yes
+
+- name: Mark repo folder as safe for Git
+  shell: git config --global --add safe.directory /home/ubuntu/blog-app
+  become_user: ubuntu
+
+- name: Clone backend repo
+  git:
+    repo: "https://github.com/cw-barry/blog-app-MERN.git"
+    dest: /home/ubuntu/blog-app
+    version: HEAD
+    force: yes
+    update: yes
+
+- name: Copy environment file
+  template:
+    src: env.j2
+    dest: /home/ubuntu/blog-app/backend/.env
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
+- name: Install Node.js using NVM
+  shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+    export NVM_DIR="$HOME/.nvm"
+    source $NVM_DIR/nvm.sh
+    nvm install --lts
+    nvm use --lts
+    npm install -g pm2
+  args:
+    executable: /bin/bash
+  become_user: ubuntu
+
+- name: Fix ownership of backend folder
+  file:
+    path: /home/ubuntu/blog-app/backend
+    owner: ubuntu
+    group: ubuntu
+    recurse: yes
+
+- name: Create logs directory for backend
+  file:
+    path: /home/ubuntu/blog-app/backend/logs
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: '0755'
+
+- name: Install backend dependencies
+  shell: |
+    export NVM_DIR="$HOME/.nvm"
+    source $NVM_DIR/nvm.sh
+    cd ~/blog-app/backend
+    npm install
+  args:
+    executable: /bin/bash
+  become_user: ubuntu
+
+- name: Start backend with PM2
+  shell: |
+    export NVM_DIR="$HOME/.nvm"
+    source $NVM_DIR/nvm.sh
+    cd ~/blog-app/backend
+    mkdir -p logs
+    pm2 start index.js --name "blog-backend"
+    pm2 save
+  args:
+    executable: /bin/bash
+  become_user: ubuntu
