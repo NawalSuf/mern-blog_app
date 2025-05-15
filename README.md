@@ -88,7 +88,7 @@ Build & Deploy:
 pnpm run build
 aws s3 sync dist/ s3://frontend-bucket-alsufyani/ --delete
 
-![S3 frontend in browser](screenshot/PM2showingbackendrunning.png)
+![S3 frontend in browser](screenshot/S3-frontend-in-browser.png)
 
 
 ## 🔐 Security Measures
